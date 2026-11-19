@@ -522,7 +522,7 @@ function vReglages() {
     <button class="full" data-act="exportData">⬇️ Exporter mes données</button>
     <label class="btn full" style="margin-top:8px">⬆️ Importer une sauvegarde<input type="file" accept="application/json,.json" data-change="importData" hidden></label></div>
   <h2>Zone rouge</h2><div class="card"><button class="danger full" data-act="resetData">Tout effacer</button></div>
-  <p class="small muted" style="text-align:center">New Me · v2</p>`;
+  <p class="small muted" style="text-align:center">New Me · v3</p>`;
 }
 
 // ================= Minuteurs (repos + ordi) =================
