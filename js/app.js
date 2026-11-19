@@ -496,13 +496,18 @@ function vMollet() {
 }
 
 // ================= Rappels =================
+// webcal:// ouvre directement l’app Calendrier (abonnement), même depuis l’app installée.
+const cal = (file) => (location.protocol === 'https:' ? `webcal://${location.host}${location.pathname.replace(/[^/]*$/, '')}${file}` : file);
+
 function vRappels() {
   return back + `<div class="card acc"><b>Vraies notifications sur l’iPhone</b>
     <p class="small">Une app web ne peut pas programmer de notifs toute seule. L’astuce : les rappels passent par ton Calendrier, avec des alarmes qui sonnent même app fermée.</p>
-    <a class="btn primary full" href="rappels.ics" target="_blank" rel="noopener">📅 Ajouter les rappels au Calendrier</a>
+    <a class="btn primary full" href="${cal('rappels.ics')}">📅 Ajouter les rappels au Calendrier</a>
     <p class="small muted">Coucher (dim-mer), marche après le midi (tous les jours), meal prep (dim + mer), pesée (lun, mer, ven).</p>
-    <a class="btn full" href="rappels-ordi.ics" target="_blank" rel="noopener" style="margin-top:6px">🧍 Ajouter « lève-toi » (lun-mer, toutes les 45 min)</a>
-    <p class="small muted">Si rien ne se passe depuis l’app installée : ouvre la même page dans Safari et touche le bouton. iPhone → « Tout ajouter ».</p></div>
+    <a class="btn full" href="${cal('rappels-ordi.ics')}" style="margin-top:6px">🧍 Ajouter « lève-toi » (lun-mer, toutes les 45 min)</a>
+    <p class="small"><b>Ensuite, sur l’iPhone :</b></p>
+    <ol class="rules small"><li>Calendrier s’ouvre → touche <b>S’abonner</b>.</li><li>Sur l’écran suivant, <b>désactive « Supprimer les alarmes »</b>, sinon rien ne sonne.</li><li>Touche <b>OK</b> (ou Ajouter).</li></ol>
+    <p class="small muted">Pour les enlever : Calendrier → Calendriers → « New Me » → ⓘ → Se désabonner.</p></div>
   <h2>Dans l’app</h2><div class="card"><div class="row between"><span>🧍 Minuteur « lève-toi » 45 min</span><button class="sm ${timers.ordi ? 'on' : ''}" data-act="${timers.ordi ? 'ordiStop' : 'ordiStart'}">${timers.ordi ? 'Arrêter' : 'Lancer'}</button></div>
     <p class="small muted">Sonne seulement si l’app est ouverte. Sur l’écran « Aujourd’hui », les bandeaux te rappellent : pesée, marche, meal prep, heure de coucher.</p></div>
   <h2>Les horaires</h2><div class="card tight">
@@ -517,7 +522,7 @@ function vReglages() {
     <button class="full" data-act="exportData">⬇️ Exporter mes données</button>
     <label class="btn full" style="margin-top:8px">⬆️ Importer une sauvegarde<input type="file" accept="application/json,.json" data-change="importData" hidden></label></div>
   <h2>Zone rouge</h2><div class="card"><button class="danger full" data-act="resetData">Tout effacer</button></div>
-  <p class="small muted" style="text-align:center">New Me · v1</p>`;
+  <p class="small muted" style="text-align:center">New Me · v2</p>`;
 }
 
 // ================= Minuteurs (repos + ordi) =================

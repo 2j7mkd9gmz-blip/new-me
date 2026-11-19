@@ -24,13 +24,13 @@ Le dépôt est public : le code se voit, **mais pas tes données** (poids, séan
 
 ## Activer les rappels (vraies notifications)
 
-Dans l'app : **Plus → Rappels → Ajouter les rappels au Calendrier**, puis **Tout ajouter** sur l'iPhone.
-Si rien ne se passe depuis l'app installée, ouvre la même adresse dans Safari et touche le bouton.
+Dans l'app : **Plus → Rappels → Ajouter les rappels au Calendrier**. L'app Calendrier s'ouvre :
+touche **S'abonner**, puis **désactive « Supprimer les alarmes »** (sinon rien ne sonne) et touche **OK**.
 
 - `rappels.ics` : coucher (dim-mer), marche après le midi, meal prep (dim + mer), pesée (lun, mer, ven)
 - `rappels-ordi.ics` : « lève-toi » toutes les 45 min, lun-mer de 8h30 à 17h (optionnel)
 
-Pour les enlever : app Calendrier → l'événement → Supprimer → « Supprimer tous les événements futurs ».
+Pour les enlever : Calendrier → Calendriers → « New Me » → ⓘ → Se désabonner.
 
 ## Mettre à jour l'app
 

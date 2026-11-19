@@ -1,6 +1,6 @@
 // Service worker : tout est mis en cache pour marcher hors ligne.
 // Change VERSION à chaque mise à jour pour forcer le rafraîchissement.
-const VERSION = 'newme-v1';
+const VERSION = 'newme-v2';
 const FILES = [
   './',
   './index.html',
