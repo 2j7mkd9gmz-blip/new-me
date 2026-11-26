@@ -1,49 +1,41 @@
-// Service worker : tout est mis en cache pour marcher hors ligne.
-// Change VERSION à chaque mise à jour pour forcer le rafraîchissement.
-const VERSION = 'newme-v4';
-const FILES = [
-  './',
-  './index.html',
-  './style.css',
-  './manifest.webmanifest',
-  './js/app.js',
-  './js/data.js',
-  './js/store.js',
-  './js/util.js',
-  './js/icons.js',
-  './icons/icon-180.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './rappels.ics',
-  './rappels-ordi.ics',
+// Service worker : l'app entière marche hors ligne.
+const VERSION = 'newme-v2';
+const CORE = [
+  './', 'index.html', 'styles.css', 'manifest.webmanifest', 'icons/favicon-64.png', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png',
+  'vendor/preact-htm.js',
+  'js/app.js', 'js/db.js', 'js/sync.js', 'js/engine.js', 'js/ui.js', 'js/nav.js', 'js/nutrition.js', 'js/reminders.js', 'js/ai.js',
+  'js/data/program.js', 'js/data/foods.js', 'js/data/meals.js', 'js/data/quotes.js',
+  'js/screens/today.js', 'js/screens/training.js', 'js/screens/food.js', 'js/screens/track.js', 'js/screens/motivation.js', 'js/screens/settings.js',
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
-// Réseau d'abord (pour avoir les mises à jour), cache si hors ligne.
-self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET') return;
-  const fromCache = () => caches.match(e.request, { ignoreSearch: true })
-    .then((r) => r || (e.request.mode === 'navigate' ? caches.match('./index.html') : undefined));
-  e.respondWith(
-    fetch(e.request)
-      .then((res) => {
-        // Erreur serveur (ex. 503 GitHub) : on garde la version en cache plutôt qu'une page d'erreur.
-        if (!res.ok) return fromCache().then((r) => r || res);
-        const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put(e.request, copy));
-        return res;
-      })
-      .catch(() => fromCache().then((r) => r || Response.error()))
-  );
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  // Jamais de cache pour Supabase, Claude, Open Food Facts
+  if (/supabase\.co|anthropic\.com|openfoodfacts\.org/.test(url.hostname)) return;
+  // Polices et librairies externes : cache d'abord, puis réseau
+  if (url.origin !== location.origin) {
+    e.respondWith(caches.open(VERSION + '-ext').then(async c => {
+      const hit = await c.match(req);
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res.ok || res.type === 'opaque') c.put(req, res.clone());
+      return res;
+    }));
+    return;
+  }
+  // Fichiers de l'app : réseau d'abord (mises à jour), cache si hors ligne
+  e.respondWith(fetch(req, { cache: 'no-cache' }).then(res => {
+    if (res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
+    return res;
+  }).catch(() => caches.match(req).then(r => r || caches.match('index.html'))));
 });

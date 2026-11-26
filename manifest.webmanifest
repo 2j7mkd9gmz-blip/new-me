@@ -1,14 +1,14 @@
 {
   "name": "New Me",
   "short_name": "New Me",
-  "description": "Mon programme : poids, muscu, basket, bouffe, sommeil.",
+  "description": "Programme perte de poids et performance basket",
   "lang": "fr",
-  "start_url": "./#/today",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0b10",
-  "theme_color": "#0a0b10",
+  "background_color": "#0C0B0A",
+  "theme_color": "#0C0B0A",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

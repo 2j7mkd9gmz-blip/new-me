@@ -2,31 +2,33 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <title>New Me</title>
-  <meta name="description" content="Mon programme : poids, muscu, basket, bouffe, sommeil.">
-  <meta name="theme-color" content="#0a0b10">
+  <meta name="description" content="Programme perte de poids et performance basket.">
+  <meta name="theme-color" content="#0C0B0A" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F2EEE8" media="(prefers-color-scheme: light)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="New Me">
-  <link rel="apple-touch-icon" href="icons/icon-180.png">
-  <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icons/favicon-64.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try { var t = localStorage.getItem('nm-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
-  <header class="topbar"><div><span class="sub" id="subtitle"></span><h1 id="title">New Me</h1></div><div id="topright"></div></header>
-  <main id="view" class="view"></main>
-  <div id="timer" class="timer" hidden></div>
-  <div id="toast" class="toast" hidden></div>
-  <nav class="tabbar" id="tabbar">
-    <a href="#/today" data-tab="today">Aujourd'hui</a>
-    <a href="#/poids" data-tab="poids">Poids</a>
-    <a href="#/muscu" data-tab="muscu">Muscu</a>
-    <a href="#/food" data-tab="food">Bouffe</a>
-    <a href="#/plus" data-tab="plus">Plus</a>
-  </nav>
+  <div id="app"></div>
   <script type="module" src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js'); });
+    }
+  </script>
 </body>
 </html>
