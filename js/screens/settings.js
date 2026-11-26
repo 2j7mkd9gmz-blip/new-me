@@ -1,7 +1,7 @@
 import { html, useState, useEffect } from '../../vendor/preact-htm.js';
 import { db, local } from '../db.js';
 import { Icon, toast } from '../ui.js';
-import { isConfigured, isSignedIn, userEmail, sendCode, verifyCode, signOut, sync, onSync, syncState, createShortcutToken, ingestUrl } from '../sync.js';
+import { isConfigured, isSignedIn, userEmail, signIn, signOut, sync, onSync, syncState, createShortcutToken, ingestUrl } from '../sync.js';
 import { downloadIcs } from '../reminders.js';
 import { back } from '../nav.js';
 
@@ -70,8 +70,7 @@ function SyncSection() {
   const [url, setUrl] = useState(cfg?.url || '');
   const [anon, setAnon] = useState(cfg?.anon || '');
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
-  const [step, setStep] = useState('email');
+  const [pass, setPass] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [token, setToken] = useState(null);
@@ -92,18 +91,18 @@ function SyncSection() {
   if (!isSignedIn()) return html`<section class="stack gap-8">
     <div class="section-head"><h2 class="h2">Connexion</h2></div>
     <div class="card stack gap-12">
-      ${step === 'email' ? html`
-        <p class="small muted" style="margin:0">Tu reçois un code à 6 chiffres par e-mail. Pas de mot de passe.</p>
-        <input class="input" type="email" autocomplete="email" placeholder="ton@email.ch" value=${email} onInput=${e => setEmail(e.target.value.trim())} />
-        ${err && html`<div class="small danger">${err}</div>`}
-        <button class="btn primary block" disabled=${busy} onClick=${() => run(async () => { if (!email.includes('@')) throw new Error('E-mail invalide'); await sendCode(email); setStep('code'); })}>${busy ? 'Envoi…' : 'Recevoir le code'}</button>
-      ` : html`
-        <p class="small muted" style="margin:0">Code envoyé à ${email}.</p>
-        <input class="input num-input" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" value=${code} onInput=${e => setCode(e.target.value.trim())} />
-        ${err && html`<div class="small danger">${err}</div>`}
-        <button class="btn primary block" disabled=${busy} onClick=${() => run(async () => { await verifyCode(email, code); toast('Connecté. Synchro en cours.'); sync(); })}>${busy ? 'Vérification…' : 'Se connecter'}</button>
-        <button class="small muted" onClick=${() => setStep('email')}>Changer d’e-mail</button>
-      `}
+      <p class="small muted" style="margin:0">Choisis un mot de passe (8 caractères minimum). La première fois, ton compte est créé automatiquement. Ton iPhone peut l’enregistrer dans ton trousseau.</p>
+      <input class="input" type="email" autocomplete="username" placeholder="ton@email.ch" value=${email} onInput=${e => { setEmail(e.target.value.trim()); setErr(null); }} />
+      <input class="input" type="password" autocomplete="current-password" placeholder="Mot de passe" value=${pass} onInput=${e => { setPass(e.target.value); setErr(null); }} />
+      ${err && html`<div class="small danger">${err}</div>`}
+      <button class="btn primary block" disabled=${busy} onClick=${() => run(async () => {
+        if (!email.includes('@')) throw new Error('E-mail invalide.');
+        if (pass.length < 8) throw new Error('Mot de passe trop court : 8 caractères minimum.');
+        const r = await signIn(email, pass);
+        setPass('');
+        toast(r === 'signup' ? 'Compte créé. Synchro en cours.' : 'Connecté. Synchro en cours.');
+        sync();
+      })}>${busy ? 'Connexion…' : 'Se connecter'}</button>
       <button class="small muted" onClick=${() => { local.del('supabase'); refresh(x => x + 1); }}>Modifier la configuration Supabase</button>
     </div>
   </section>`;

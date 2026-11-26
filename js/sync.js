@@ -1,4 +1,4 @@
-// Synchronisation avec Supabase, sans librairie : API REST + Auth par code reçu par e-mail.
+// Synchronisation avec Supabase, sans librairie : API REST + Auth par e-mail et mot de passe.
 import { db, local } from './db.js';
 
 const cfg = () => local.get('supabase', null); // { url, anon }
@@ -27,8 +27,26 @@ function saveSession(j) {
   local.set('session', { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() + (j.expires_in || 3600) * 1000, user: j.user });
 }
 
-export async function sendCode(email) { await authFetch('otp', { email, create_user: true }); }
-export async function verifyCode(email, token) { saveSession(await authFetch('verify', { type: 'email', email, token })); }
+// Connexion e-mail + mot de passe. Premier essai : compte créé automatiquement.
+// Côté Supabase, « Confirm email » doit être désactivé (aucun e-mail n'est envoyé).
+export async function signIn(email, password) {
+  try {
+    saveSession(await authFetch('token?grant_type=password', { email, password }));
+    return 'login';
+  } catch (e) {
+    if (!/invalid login credentials/i.test(e.message)) throw e;
+  }
+  let j;
+  try { j = await authFetch('signup', { email, password }); }
+  catch (e) {
+    if (/already registered|already exists/i.test(e.message)) throw new Error('Mot de passe incorrect pour ce compte.');
+    if (/password/i.test(e.message)) throw new Error('Mot de passe trop faible : 8 caractères minimum, avec des lettres et des chiffres.');
+    throw e;
+  }
+  if (!j.access_token) throw new Error('Compte créé mais pas activé : dans Supabase, désactive « Confirm email » (Authentication → Sign In / Providers → Email), puis reconnecte-toi.');
+  saveSession(j);
+  return 'signup';
+}
 export function signOut() { local.del('session'); local.del('lastPull'); emit(); }
 
 async function token() {
