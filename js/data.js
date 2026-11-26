@@ -250,7 +250,7 @@ export function dayPlan(date, st) {
   const WAKE = { 0: '05:45', 1: '05:00', 2: '05:00' }; // lever du lendemain (lun, mar, mer)
   const bed = BED[w];
   const bedNote = w === 0 || w === 3 ? 'Au lit avant 22h30, sans exception' : w <= 2 ? `Lever demain ${WAKE[w].replace(':', 'h')}` : '7h de sommeil minimum';
-  tasks.push({ id: 'bed', icon: '🛏️', text: `Au lit à ${bed.replace(':', 'h')}`, sub: bedNote + ' · lit = dormir, pas d’ordi' });
+  tasks.push({ id: 'bed', icon: '🛏️', text: `Au lit à ${bed.replace(':00', 'h').replace(':', 'h')}`, sub: bedNote + ' · lit = dormir, pas d’ordi' });
 
   return { date, w, isWork, basket, session, isMatchDay, afterMatch, eveOfMatch, match, tags, tasks, notes, stepsGoal, kcal, prot: [130, 140], meals, bed, poings };
 }
