@@ -84,7 +84,7 @@ function SyncSection() {
       <input class="input" placeholder="https://xxxx.supabase.co" value=${url} onInput=${e => setUrl(e.target.value.trim())} />
       <input class="input" placeholder="Clé anon (eyJ…)" value=${anon} onInput=${e => setAnon(e.target.value.trim())} />
       ${err && html`<div class="small danger">${err}</div>`}
-      <button class="btn primary block" onClick=${() => { if (!/^https:\/\/.+\.supabase\.co$/.test(url.replace(/\/$/, '')) || anon.length < 20) { setErr('Vérifie l’URL et la clé.'); return; } local.set('supabase', { url: url.replace(/\/$/, ''), anon }); refresh(x => x + 1); }}>Enregistrer</button>
+      <button class="btn primary block" onClick=${() => { const u = url.trim().replace(/\/(rest|auth|functions)\/v1.*$/, '').replace(/\/+$/, ''); if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(u)) { setErr('URL attendue : https://xxxx.supabase.co'); return; } if (anon.trim().length < 20) { setErr('Colle la clé anon (ou publishable) en entier.'); return; } local.set('supabase', { url: u, anon: anon.trim() }); refresh(x => x + 1); }}>Enregistrer</button>
     </div>
   </section>`;
 

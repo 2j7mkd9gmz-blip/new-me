@@ -1,5 +1,5 @@
 // Service worker : l'app entière marche hors ligne.
-const VERSION = 'newme-v3';
+const VERSION = 'newme-v4';
 const CORE = [
   './', 'index.html', 'styles.css', 'manifest.webmanifest', 'icons/favicon-64.png', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png',
   'vendor/preact-htm.js',
